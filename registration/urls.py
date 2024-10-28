@@ -1,17 +1,8 @@
-from django.urls import include, path
-from . import views
-from rest_framework import routers
+from django.urls import path
+from .views import ParcelCreateUpdateView, ParcelTypeListView
 
-app_name = "registration"
-
-router = routers.DefaultRouter()
-# router.register(r'registration', views.UserViewSet)
-#
-#
-# urlpatterns = [
-#     path('', include(router.urls)),
-# ]
 urlpatterns = [
-    path('example/', views.example_view, name='example'),
-    # Добавьте здесь другие пути, если они есть
+    path('parcels/', ParcelCreateUpdateView.as_view(), name='parcel-create'),
+    path('parcels/<int:pk>/', ParcelCreateUpdateView.as_view(), name='parcel-create'),
+    path('parcel-types/', ParcelTypeListView.as_view(), name='parcel-type-list'),
 ]

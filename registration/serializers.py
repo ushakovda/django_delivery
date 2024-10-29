@@ -8,7 +8,7 @@ class ParcelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Parcel
-        fields = ['name', 'weight', 'content_value_usd', 'parcel_type', 'registered_at',
+        fields = ['name', 'weight', 'content_value_usd', 'parcel_type_name', 'parcel_type', 'registered_at',
                   'delivery_cost_rub'] # Эти поля будем возвращать клиенту
 
     def create(self, validated_data):

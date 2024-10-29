@@ -1,8 +1,12 @@
-from django.urls import path
-from .views import ParcelCreateUpdateView, ParcelTypeListView
+from django.urls import path, include
+from rest_framework import routers
+
+from .views import ParcelViewSet
+
+router = routers.DefaultRouter()  # получать менять удалять, получить список, добавить новую
+router.register(r'parcels', ParcelViewSet)
 
 urlpatterns = [
-    path('parcels/', ParcelCreateUpdateView.as_view(), name='parcel-create'),
-    path('parcels/<int:pk>/', ParcelCreateUpdateView.as_view(), name='parcel-create'),
-    path('parcel-types/', ParcelTypeListView.as_view(), name='parcel-type-list'),
+    path('', include(router.urls)),
+    path('auth/', include('rest_framework.urls')),
 ]

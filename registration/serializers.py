@@ -1,7 +1,14 @@
 from rest_framework import serializers
 from .models import Parcel, ParcelType
 
-
+''' Входные данные
+{ 
+    "name": "Одежда",
+    "weight": "2.50",
+    "content_value_usd": "100.00",
+    "parcel_type_name": "Одежда"
+}
+'''
 class ParcelSerializer(serializers.ModelSerializer):
     parcel_type_name = serializers.CharField(write_only=True)  # Пользователь вводит название типа
     parcel_type = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -9,12 +16,12 @@ class ParcelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parcel
         fields = ['name', 'weight', 'content_value_usd', 'parcel_type_name', 'parcel_type', 'registered_at',
-                  'delivery_cost_rub'] # Эти поля будем возвращать клиенту
+                  'delivery_cost_rub', 'id'] # Эти поля будем возвращать клиенту
 
     def create(self, validated_data):
         parcel_type_name = validated_data.pop('parcel_type_name')
         try:
-            parcel_type = ParcelType.objects.get(name=parcel_type_name)  # Проверка существования типа
+            parcel_type = ParcelType.objects.get(name=parcel_type_name)
         except ParcelType.DoesNotExist:
             raise serializers.ValidationError({"parcel_type_name": "Указанный тип посылки не найден."})
 
@@ -42,14 +49,8 @@ class ParcelTypeSerializer(serializers.ModelSerializer):
         model = ParcelType
         fields = '__all__'
 
-''' Входные данные
-{ 
-    "name": "Одежда",
-    "weight": "2.50",
-    "content_value_usd": "100.00",
-    "parcel_type_name": "Одежда"
-}
 
+'''
 Выходные данные
 {
     "name": "Посылка 1",

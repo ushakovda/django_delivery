@@ -7,6 +7,10 @@ from rest_framework.viewsets import GenericViewSet
 from .models import Parcel, ParcelType
 from .serializers import ParcelSerializer, ParcelTypeSerializer
 
+
+
+
+
 class ParcelViewSet(mixins.CreateModelMixin,
                    mixins.UpdateModelMixin,
                    mixins.DestroyModelMixin,
@@ -20,3 +24,9 @@ class ParcelViewSet(mixins.CreateModelMixin,
         parcel_types = ParcelType.objects.all()
         serializer = ParcelTypeSerializer(parcel_types, many=True)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        parcel = serializer.save()
+        return Response({'id': parcel.id}, status=status.HTTP_201_CREATED)

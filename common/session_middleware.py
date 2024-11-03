@@ -9,17 +9,8 @@ class SessionMiddleware(MiddlewareMixin):
 
         if not session_id:
             session_id = str(uuid.uuid4())
-            request.session_id = session_id  # Устанавливаем session_id в атрибут запроса
+            request.session_id = session_id
 
-        # Создаем или обновляем сессию в базе данных
-        user_id = request.user.id if request.user.is_authenticated else None
         UserSession.objects.update_or_create(session_id=session_id)
 
-        # Сохраняем session_id в атрибутах запроса
         request.session_id = session_id
-
-    def process_response(self, request, response):
-        # Кладем ID сессии в куки только при наличии нового session_id
-        if hasattr(request, 'session_id'):
-            response.set_cookie('session_id', request.session_id)
-        return response

@@ -1,6 +1,7 @@
 import uuid
 
-from rest_framework import generics, mixins, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins, status, filters
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
@@ -17,6 +18,13 @@ class ParcelViewSet(mixins.CreateModelMixin,
 
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = {
+        'parcel_type': ['exact'],
+        'delivery_cost_rub': ['isnull'],
+    }
+    ordering_fields = '__all__'
+    ordering = ['registered_at']
 
     @action(methods=['get'], detail=False)
     def types(self, request):
@@ -56,4 +64,21 @@ class ParcelViewSet(mixins.CreateModelMixin,
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         serializer = self.get_serializer(parcel)
+        return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        session_id = request.COOKIES.get('session_id')
+
+        if not session_id:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        parcels = Parcel.objects.filter(session_id=session_id)
+        parcels = self.filter_queryset(parcels)
+        page = self.paginate_queryset(parcels)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(parcels, many=True)
         return Response(serializer.data)

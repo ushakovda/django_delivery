@@ -8,6 +8,12 @@ from .models import Parcel, ParcelType
     "content_value_usd": "100.00",
     "parcel_type_name": "Одежда"
 }
+{ 
+    "name": "IPhone 15 pro max 512gb",
+    "weight": "0.4",
+    "content_value_usd": "1290",
+    "parcel_type_name": "Электроника"
+}
 '''
 class ParcelSerializer(serializers.ModelSerializer):
     parcel_type_name = serializers.CharField(write_only=True)  # Пользователь вводит название типа

@@ -45,7 +45,18 @@ services:
     depends_on:
       - web
       - redis
-    command: celery -A celery_app worker --loglevel=info
+    command: celery -A django_delivery worker -l info
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - celery
+    command: celery -A django_delivery flower --port=5555
+    ports:
+      - "5555:5555"
 
 volumes:
   postgres_data:

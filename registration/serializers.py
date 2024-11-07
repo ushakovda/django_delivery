@@ -1,30 +1,18 @@
 from rest_framework import serializers
 from .models import Parcel, ParcelType
 
-''' Входные данные
-{ 
-    "name": "Одежда",
-    "weight": "2.50",
-    "content_value_usd": "100.00",
-    "parcel_type_name": "Одежда"
-}
-{ 
-    "name": "IPhone 15 pro max 512gb",
-    "weight": "0.4",
-    "content_value_usd": "1290",
-    "parcel_type_name": "Электроника"
-}
-'''
+
 class ParcelSerializer(serializers.ModelSerializer):
-    parcel_type_name = serializers.CharField(write_only=True)  # Пользователь вводит название типа
+    parcel_type_name = serializers.CharField(write_only=True)
     parcel_type = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Parcel
         fields = ['name', 'weight', 'content_value_usd', 'parcel_type_name', 'parcel_type', 'registered_at',
-                  'delivery_cost_rub', 'id'] # Эти поля будем возвращать клиенту
+                  'delivery_cost_rub', 'id']
 
     def create(self, validated_data):
+        """Создаёт новую посылку, связывая её с типом посылки, указанным в `parcel_type_name`."""
         parcel_type_name = validated_data.pop('parcel_type_name')
         try:
             parcel_type = ParcelType.objects.get(name=parcel_type_name)
@@ -35,9 +23,10 @@ class ParcelSerializer(serializers.ModelSerializer):
         return parcel
 
     def update(self, instance, validated_data):
+        """Обновляет существующую посылку, меняя её данные, включая тип посылки."""
         parcel_type_name = validated_data.pop('parcel_type_name')
         try:
-            parcel_type = ParcelType.objects.get(name=parcel_type_name)  # Проверка существования типа
+            parcel_type = ParcelType.objects.get(name=parcel_type_name)
         except ParcelType.DoesNotExist:
             raise serializers.ValidationError({"parcel_type_name": "Указанный тип посылки не найден."})
 
@@ -46,24 +35,12 @@ class ParcelSerializer(serializers.ModelSerializer):
         instance.content_value_usd = validated_data.get('content_value_usd', instance.content_value_usd)
         instance.parcel_type = parcel_type
         instance.registered_at = validated_data.get('registered_at', instance.registered_at)
-        # instance.delivery_cost_rub = validated_data.get('delivery_cost_rub', instance.delivery_cost_rub)
         instance.save()
         return instance
 
+
 class ParcelTypeSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели ParcelType."""
     class Meta:
         model = ParcelType
         fields = '__all__'
-
-
-'''
-Выходные данные
-{
-    "name": "Посылка 1",
-    "weight": "2.50",
-    "content_value_usd": "100.00",
-    "parcel_type": 1,  # ID типа посылки
-    "registered_at": "2024-10-26T12:00:00Z",  # Время регистрации
-    "delivery_cost_rub": null  # Стоимость доставки (не рассчитана)
-}
-'''

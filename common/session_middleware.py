@@ -1,9 +1,13 @@
-# common/middlewares/session_middleware.py
 from django.utils.deprecation import MiddlewareMixin
 from .models import UserSession
 import uuid
 
+
 class SessionMiddleware(MiddlewareMixin):
+    """
+    Middleware для обработки сессий пользователей. Проверяет наличие session_id в cookies. Если его нет,
+    генерирует новый и сохраняет в cookies и базе данных.
+    """
     def process_request(self, request):
         session_id = request.COOKIES.get('session_id')
 

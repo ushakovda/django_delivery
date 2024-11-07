@@ -10,6 +10,7 @@ from common.models import UserSession
 from .models import Parcel, ParcelType
 from .serializers import ParcelSerializer, ParcelTypeSerializer
 
+
 class ParcelViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
@@ -28,11 +29,13 @@ class ParcelViewSet(mixins.CreateModelMixin,
 
     @action(methods=['get'], detail=False)
     def types(self, request):
+        """Возвращает список всех типов посылок."""
         parcel_types = ParcelType.objects.all()
         serializer = ParcelTypeSerializer(parcel_types, many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        """Создаёт новую посылку, связывая её с текущей сессией."""
         serializer = self.get_serializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         session_id = request.session_id
@@ -44,6 +47,7 @@ class ParcelViewSet(mixins.CreateModelMixin,
         return response
 
     def retrieve(self, request, *args, **kwargs):
+        """Возвращает информацию о посылке по её ID и проверяет корректность сессии."""
         session_id_str = request.COOKIES.get('session_id')
         parcel_id = kwargs.get('pk')
 
@@ -67,6 +71,7 @@ class ParcelViewSet(mixins.CreateModelMixin,
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
+        """Возвращает список посылок, относящихся к текущей сессии."""
         session_id = request.COOKIES.get('session_id')
 
         if not session_id:

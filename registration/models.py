@@ -10,6 +10,7 @@ class ParcelType(models.Model):
     def __str__(self):
         return self.name
 
+
 class Parcel(models.Model):
     name = models.CharField(max_length=100)
     weight = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(0.01), MaxValueValidator(100)])
@@ -22,10 +23,3 @@ class Parcel(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.parcel_type})"
-
-# class ExchangeRate(models.Model): # для хранения и кэширования текущего курса доллара к рублю
-#     rate = models.DecimalField(max_digits=10, decimal_places=4)
-#     updated_at = models.DateTimeField(auto_now=True)
-#
-#     def __str__(self):
-#         return f"USD to RUB: {self.rate}"

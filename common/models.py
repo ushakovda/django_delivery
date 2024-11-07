@@ -1,6 +1,6 @@
+from django.db import models
 import uuid
 
-from django.db import models
 
 class UserSession(models.Model):
     session_id = models.UUIDField(default=uuid.uuid4, unique=True)

@@ -16,5 +16,3 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/5'),
     },
 }
-
-#  celery -A celery worker --loglevel=info

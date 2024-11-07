@@ -3,15 +3,15 @@ services:
     image: postgres:13
     restart: always
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: home
-      POSTGRES_PASSWORD: home
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U home -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -28,6 +28,8 @@ services:
       - PYTHONUNBUFFERED=1
     depends_on:
       - postgres
+    env_file:
+      - .env
 
   redis:
     image: redis:latest
@@ -45,18 +47,15 @@ services:
     depends_on:
       - web
       - redis
-    command: celery -A django_delivery worker -l info
+    command: celery -A django_delivery worker -l info -E
 
-  flower:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  celery-beat:
+    build: .
+    command: celery -A django_delivery beat -l info
+    volumes:
+      - .:/app
     depends_on:
       - redis
-      - celery
-    command: celery -A django_delivery flower --port=5555
-    ports:
-      - "5555:5555"
 
 volumes:
   postgres_data:

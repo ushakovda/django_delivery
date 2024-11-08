@@ -1,0 +1,31 @@
+# Исключенные директории и файлы
+exclude = [
+    ".bzr", ".direnv", ".eggs", ".git", ".git-rewrite", ".hg",
+    ".ipynb_checkpoints", ".mypy_cache", ".nox", ".pants.d", ".pyenv", 
+    ".pytest_cache", ".pytype", ".ruff_cache", ".svn", ".tox", ".venv", 
+    ".vscode", "__pypackages__", "_build", "buck-out", "build", "dist", 
+    "node_modules", "site-packages", "venv",
+]
+
+# Общие настройки для всего проекта
+[tool.ruff]
+line-length = 88  # Максимальная длина строки
+indent-width = 4  # Ширина отступа
+target-version = "py38"  # Используемая версия Python (Python 3.8)
+
+# Настройки линтинга
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]  # Выбор типов ошибок (E - ошибки стиля, F - ошибки Pyflakes)
+ignore = []  # Ошибки, которые следует игнорировать
+fixable = ["ALL"]  # Правила, для которых возможна автоматическая фиксация
+unfixable = []  # Правила, для которых автоматическая фиксация невозможна
+
+# Разрешение использования переменных с подчеркиванием в качестве "псевдонимов"
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Форматирование кода
+[tool.ruff.format]
+quote-style = "double"  # Использование двойных кавычек
+indent-style = "space"  # Отступы пробелами (не табуляциями)
+skip-magic-trailing-comma = false  # Не пропускать магические запятые в списках
+line-ending = "auto"  # Автоматическое определение правильного символа окончания строки

@@ -6,28 +6,28 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 
-from common.models import UserSession
 from .models import Parcel, ParcelType
 from .serializers import ParcelSerializer, ParcelTypeSerializer
 
 
-class ParcelViewSet(mixins.CreateModelMixin,
-                    mixins.UpdateModelMixin,
-                    mixins.DestroyModelMixin,
-                    mixins.RetrieveModelMixin,
-                    GenericViewSet):
-
+class ParcelViewSet(
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    GenericViewSet,
+):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = {
-        'parcel_type': ['exact'],
-        'delivery_cost_rub': ['isnull'],
+        "parcel_type": ["exact"],
+        "delivery_cost_rub": ["isnull"],
     }
-    ordering_fields = '__all__'
-    ordering = ['registered_at']
+    ordering_fields = "__all__"
+    ordering = ["registered_at"]
 
-    @action(methods=['get'], detail=False)
+    @action(methods=["get"], detail=False)
     def types(self, request):
         """Возвращает список всех типов посылок."""
         parcel_types = ParcelType.objects.all()
@@ -36,20 +36,24 @@ class ParcelViewSet(mixins.CreateModelMixin,
 
     def create(self, request, *args, **kwargs):
         """Создаёт новую посылку, связывая её с текущей сессией."""
-        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         session_id = request.session_id
         parcel = serializer.save(session_id=session_id)
-        response = Response({'id': parcel.id}, status=status.HTTP_201_CREATED)
-        if not request.COOKIES.get('session_id'):
-            response.set_cookie('session_id', session_id)  # Устанавливаем cookie, если его нет
+        response = Response({"id": parcel.id}, status=status.HTTP_201_CREATED)
+        if not request.COOKIES.get("session_id"):
+            response.set_cookie(
+                "session_id", session_id
+            )  # Устанавливаем cookie, если его нет
 
         return response
 
     def retrieve(self, request, *args, **kwargs):
         """Возвращает информацию о посылке по её ID и проверяет корректность сессии."""
-        session_id_str = request.COOKIES.get('session_id')
-        parcel_id = kwargs.get('pk')
+        session_id_str = request.COOKIES.get("session_id")
+        parcel_id = kwargs.get("pk")
 
         if not parcel_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -72,7 +76,7 @@ class ParcelViewSet(mixins.CreateModelMixin,
 
     def list(self, request, *args, **kwargs):
         """Возвращает список посылок, относящихся к текущей сессии."""
-        session_id = request.COOKIES.get('session_id')
+        session_id = request.COOKIES.get("session_id")
 
         if not session_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)

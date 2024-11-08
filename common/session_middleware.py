@@ -8,8 +8,9 @@ class SessionMiddleware(MiddlewareMixin):
     Middleware для обработки сессий пользователей. Проверяет наличие session_id в cookies. Если его нет,
     генерирует новый и сохраняет в cookies и базе данных.
     """
+
     def process_request(self, request):
-        session_id = request.COOKIES.get('session_id')
+        session_id = request.COOKIES.get("session_id")
 
         if not session_id:
             session_id = str(uuid.uuid4())

@@ -7,31 +7,81 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='ParcelType',
+            name="ParcelType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Parcel',
+            name="Parcel",
             fields=[
-                ('name', models.CharField(max_length=100)),
-                ('weight', models.DecimalField(decimal_places=2, max_digits=5, validators=[django.core.validators.MinValueValidator(0.01), django.core.validators.MaxValueValidator(100)])),
-                ('content_value_usd', models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(0.01), django.core.validators.MaxValueValidator(10000)])),
-                ('delivery_cost_rub', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, validators=[django.core.validators.MinValueValidator(0.01)])),
-                ('session_id', models.UUIDField(blank=True, null=True)),
-                ('registered_at', models.DateTimeField(auto_now_add=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('parcel_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='registration.parceltype')),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "weight",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=5,
+                        validators=[
+                            django.core.validators.MinValueValidator(0.01),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                    ),
+                ),
+                (
+                    "content_value_usd",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        validators=[
+                            django.core.validators.MinValueValidator(0.01),
+                            django.core.validators.MaxValueValidator(10000),
+                        ],
+                    ),
+                ),
+                (
+                    "delivery_cost_rub",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        validators=[django.core.validators.MinValueValidator(0.01)],
+                    ),
+                ),
+                ("session_id", models.UUIDField(blank=True, null=True)),
+                ("registered_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "parcel_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="registration.parceltype",
+                    ),
+                ),
             ],
         ),
     ]

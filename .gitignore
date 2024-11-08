@@ -1,0 +1,6 @@
+.idea/
+db.sqlite3
+__pycache__/
+.env
+registration/test_scripts.py
+celerybeat-schedule
